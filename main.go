@@ -1,3 +1,9 @@
+// Copyright 2017 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// gotest is a tiny program that shells out to `go test`
+// and prints the output in color.
 package main
 
 import (
@@ -69,7 +75,7 @@ func parse(r io.Reader, line string) {
 
 	if c == nil {
 		fmt.Printf("%s\n", line)
-	} else {
-		c.Printf("%s\n", line)
+		return
 	}
+	c.Printf("%s\n", line)
 }

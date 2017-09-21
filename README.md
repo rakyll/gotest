@@ -5,7 +5,7 @@ Like `go test` but with colors.
 ## Installation
 
 ```
-$ go get github.com/rakyll/gotest
+$ go get -u github.com/rakyll/gotest
 ```
 
 # Usage

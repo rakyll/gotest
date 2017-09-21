@@ -49,13 +49,13 @@ func consume(r io.Reader) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		parse(r, string(l))
+		parse(string(l))
 	}
 }
 
 var c *color.Color
 
-func parse(r io.Reader, line string) {
+func parse(line string) {
 	trimmed := strings.TrimSpace(line)
 
 	switch {
@@ -63,12 +63,16 @@ func parse(r io.Reader, line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
 		c = nil
+
+	// success
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
 		c = green
+
+	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):

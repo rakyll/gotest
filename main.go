@@ -27,6 +27,7 @@ func main() {
 
 func gotest(args []string) {
 	r, w := io.Pipe()
+	defer w.Close()
 
 	args = append([]string{"test"}, args...)
 	cmd := exec.Command("go", args...)

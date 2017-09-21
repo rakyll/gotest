@@ -17,3 +17,5 @@ Example:
 ```
 $ gotest -v github.com/rakyll/hey
 ```
+
+![go test output](https://i.imgur.com/jiNFx4F.gif)

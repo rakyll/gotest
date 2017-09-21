@@ -60,6 +60,8 @@ func parse(r io.Reader, line string) {
 
 	switch {
 	case strings.HasPrefix(trimmed, "=== RUN"):
+		fallthrough
+	case strings.HasPrefix(trimmed, "?"):
 		c = nil
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough

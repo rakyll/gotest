@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 
 	"github.com/fatih/color"
 )
@@ -37,7 +38,12 @@ func gotest(args []string) {
 
 	go consume(r)
 
-	cmd.Run()
+	if err := cmd.Run(); err != nil {
+		if ws, ok := cmd.ProcessState.Sys().(syscall.WaitStatus); ok {
+			os.Exit(ws.ExitStatus())
+		}
+		os.Exit(1)
+	}
 }
 
 func consume(r io.Reader) {

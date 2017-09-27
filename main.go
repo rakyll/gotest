@@ -19,10 +19,15 @@ import (
 	"github.com/fatih/color"
 )
 
-var green = color.New(color.FgGreen)
-var red = color.New(color.FgHiRed)
+var (
+	success = color.New(color.FgGreen)
+	fail    = color.New(color.FgHiRed)
+)
+
+const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
+	setPalette()
 	gotest(os.Args[1:])
 }
 
@@ -77,13 +82,13 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		c = green
+		c = success
 
 	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
-		c = red
+		c = fail
 	}
 
 	if c == nil {
@@ -91,4 +96,40 @@ func parse(line string) {
 		return
 	}
 	c.Printf("%s\n", line)
+}
+
+func setPalette() {
+	v := os.Getenv(paletteEnv)
+	if v == "" {
+		return
+	}
+	vals := strings.Split(v, ",")
+	if len(vals) != 2 {
+		return
+	}
+	if c, ok := colors[vals[0]]; ok {
+		fail = color.New(c)
+	}
+	if c, ok := colors[vals[1]]; ok {
+		success = color.New(c)
+	}
+}
+
+var colors = map[string]color.Attribute{
+	"black":     color.FgBlack,
+	"hiblack":   color.FgHiBlack,
+	"red":       color.FgRed,
+	"hired":     color.FgHiRed,
+	"green":     color.FgGreen,
+	"higreen":   color.FgHiGreen,
+	"yellow":    color.FgYellow,
+	"hiyellow":  color.FgHiYellow,
+	"blue":      color.FgBlue,
+	"hiblue":    color.FgHiBlue,
+	"magenta":   color.FgMagenta,
+	"himagenta": color.FgHiMagenta,
+	"cyan":      color.FgCyan,
+	"hicyan":    color.FgHiCyan,
+	"white":     color.FgWhite,
+	"hiwhite":   color.FgHiWhite,
 }

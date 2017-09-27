@@ -23,7 +23,7 @@ $ gotest -v github.com/rakyll/hey
 gotest comes with many colors! Configure the color of the output by setting the following env variable:
 
 ```
-$ GOTEST_PALETTE=magenta,white"
+$ GOTEST_PALETTE="magenta,white"
 ```
 
 The output will have magenta for failed cases, white for success.

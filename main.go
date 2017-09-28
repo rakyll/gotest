@@ -28,6 +28,7 @@ const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
 	setPalette()
+	enableOnCI()
 	gotest(os.Args[1:])
 }
 
@@ -96,6 +97,20 @@ func parse(line string) {
 		return
 	}
 	c.Printf("%s\n", line)
+}
+
+func enableOnCI() {
+	ci := strings.ToLower(os.Getenv("CI"))
+	switch ci {
+	case "travis":
+		fallthrough
+	case "appveyor":
+		fallthrough
+	case "gitlab_ci":
+		fallthrough
+	case "circleci":
+		color.NoColor = false
+	}
 }
 
 func setPalette() {

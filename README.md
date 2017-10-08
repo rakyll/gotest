@@ -17,8 +17,7 @@ Example:
 ```
 $ gotest -v github.com/rakyll/hey
 ```
-
-![go test output](https://i.imgur.com/jiNFx4F.gif)
+![go test output](https://i.imgur.com/udjWuZx.gif)
 
 gotest comes with many colors! Configure the color of the output by setting the following env variable:
 

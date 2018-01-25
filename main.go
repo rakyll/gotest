@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"syscall"
 
 	"github.com/fatih/color"
@@ -29,10 +30,14 @@ const paletteEnv = "GOTEST_PALETTE"
 func main() {
 	setPalette()
 	enableOnCI()
-	gotest(os.Args[1:])
+	os.Exit(gotest(os.Args[1:]))
 }
 
-func gotest(args []string) {
+func gotest(args []string) int {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	defer wg.Wait()
+
 	r, w := io.Pipe()
 	defer w.Close()
 
@@ -42,17 +47,19 @@ func gotest(args []string) {
 	cmd.Stdout = w
 	cmd.Env = os.Environ()
 
-	go consume(r)
+	go consume(&wg, r)
 
 	if err := cmd.Run(); err != nil {
 		if ws, ok := cmd.ProcessState.Sys().(syscall.WaitStatus); ok {
-			os.Exit(ws.ExitStatus())
+			return ws.ExitStatus()
 		}
-		os.Exit(1)
+		return 1
 	}
+	return 0
 }
 
-func consume(r io.Reader) {
+func consume(wg *sync.WaitGroup, r io.Reader) {
+	defer wg.Done()
 	reader := bufio.NewReader(r)
 	for {
 		l, _, err := reader.ReadLine()
@@ -60,7 +67,8 @@ func consume(r io.Reader) {
 			return
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
+			return
 		}
 		parse(string(l))
 	}

@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	success = color.New(color.FgGreen)
-	fail    = color.New(color.FgHiRed)
+	success = color.FgGreen
+	fail = color.FgHiRed
 )
 
 const paletteEnv = "GOTEST_PALETTE"
@@ -74,37 +74,29 @@ func consume(wg *sync.WaitGroup, r io.Reader) {
 	}
 }
 
-var c *color.Color
-
 func parse(line string) {
 	trimmed := strings.TrimSpace(line)
+	defer color.Unset()
 
 	switch {
-	case strings.HasPrefix(trimmed, "=== RUN"):
-		fallthrough
-	case strings.HasPrefix(trimmed, "?"):
-		c = nil
-
 	// success
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		c = success
+		//c = success
+		color.Set(success)
 
 	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
-		c = fail
+		//c = fail
+		color.Set(fail)
 	}
 
-	if c == nil {
-		fmt.Printf("%s\n", line)
-		return
-	}
-	c.Printf("%s\n", line)
+	fmt.Printf("%s\n", line)
 }
 
 func enableOnCI() {
@@ -131,10 +123,10 @@ func setPalette() {
 		return
 	}
 	if c, ok := colors[vals[0]]; ok {
-		fail = color.New(c)
+		fail = c
 	}
 	if c, ok := colors[vals[1]]; ok {
-		success = color.New(c)
+		success = c
 	}
 }
 

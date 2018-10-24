@@ -85,14 +85,12 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		//c = success
 		color.Set(success)
 
 	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
-		//c = fail
 		color.Set(fail)
 	}
 

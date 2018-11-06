@@ -15,7 +15,7 @@ Accepts all the arguments and flags `go test` works with.
 Example:
 
 ```
-$ gotest -v github.com/rakyll/hey
+$ gotest -v github.com/subtlepseudonym/hey
 ```
 ![go test output](https://i.imgur.com/udjWuZx.gif)
 

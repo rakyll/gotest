@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
@@ -48,6 +49,24 @@ func gotest(args []string) int {
 	cmd.Env = os.Environ()
 
 	go consume(&wg, r)
+
+	sigc := make(chan os.Signal)
+	done := make(chan struct{})
+	defer func() {
+		done <- struct{}{}
+	}()
+	signal.Notify(sigc)
+
+	go func() {
+		for {
+			select {
+			case sig := <-sigc:
+				cmd.Process.Signal(sig)
+			case <-done:
+				return
+			}
+		}
+	}()
 
 	if err := cmd.Run(); err != nil {
 		if ws, ok := cmd.ProcessState.Sys().(syscall.WaitStatus); ok {

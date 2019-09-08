@@ -23,10 +23,11 @@ import (
 var (
 	success = color.New(color.FgGreen)
 	fail    = color.New(color.FgHiRed)
-	ignore bool = true
+	ignore = true
 )
 
 const paletteEnv = "GOTEST_PALETTE"
+
 func main() {
 	setPalette()
 	enableOnCI()
@@ -90,9 +91,10 @@ func parse(line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
 		c = nil
-		if ignore {
+		if ignore{
 			return
 		}
+
 	// success
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough

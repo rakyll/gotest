@@ -45,6 +45,8 @@ The default output colors for `gotest` are:
 - `white`
 - `hiwhite`
 
+For a graphical presentation of the colors please see the documentation for the Go package [color](https://pkg.go.dev/mod/github.com/fatih/color), which is the implementation used for by `gotest`.
+
 You can configure the color of the output by setting the environment variable `GOTEST_PALETTE`:
 
 ```bash

@@ -132,14 +132,23 @@ func setPalette() {
 		return
 	}
 	vals := strings.Split(v, ",")
-	if len(vals) != 2 {
+	if len(vals) > 3 {
 		return
 	}
-	if c, ok := colors[vals[0]]; ok {
-		fail = color.New(c)
+	if len(vals) > 0 {
+		if c, ok := colors[vals[0]]; ok {
+			fail = color.New(c)
+		}
 	}
-	if c, ok := colors[vals[1]]; ok {
-		success = color.New(c)
+	if len(vals) > 1 {
+		if c, ok := colors[vals[1]]; ok {
+			success = color.New(c)
+		}
+	}
+	if len(vals) > 2 {
+		if c, ok := colors[vals[2]]; ok {
+			skipped = color.New(c)
+		}
 	}
 }
 

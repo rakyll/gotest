@@ -21,12 +21,10 @@ import (
 )
 
 var (
-	success = color.New(color.FgGreen)
-	skipped = color.New(color.FgYellow)
-	fail    = color.New(color.FgHiRed)
+	pass = color.New(color.FgGreen)
+	skip = color.New(color.FgYellow)
+	fail = color.New(color.FgHiRed)
 )
-
-const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
 	setPalette()
@@ -86,19 +84,19 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "?"):
 		c = nil
 
-	// success
+	// succeeded
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		c = success
+		c = pass
 
 	// skipped
 	case strings.HasPrefix(trimmed, "--- SKIP"):
-		c = skipped
+		c = skip
 
-	// failure
+	// failed
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
@@ -127,19 +125,23 @@ func enableOnCI() {
 }
 
 func setPalette() {
-	v := os.Getenv(paletteEnv)
-	if v == "" {
-		return
-	}
-	vals := strings.Split(v, ",")
-	if len(vals) != 2 {
-		return
-	}
-	if c, ok := colors[vals[0]]; ok {
-		fail = color.New(c)
-	}
-	if c, ok := colors[vals[1]]; ok {
-		success = color.New(c)
+	envArray := [3]string{"GOTEST_SKIP_COLOR", "GOTEST_FAIL_COLOR", "GOTEST_PASS_COLOR"}
+
+	for _, e := range envArray {
+		v := os.Getenv(e)
+		if v == "" {
+			continue
+		}
+		if c, ok := colors[v]; ok {
+			switch e {
+			case "GOTEST_FAIL_COLOR":
+				fail = color.New(c)
+			case "GOTEST_PASS_COLOR":
+				pass = color.New(c)
+			case "GOTEST_SKIP_COLOR":
+				skip = color.New(c)
+			}
+		}
 	}
 }
 

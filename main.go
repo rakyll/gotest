@@ -22,6 +22,7 @@ import (
 
 var (
 	success = color.FgGreen
+	skipped = color.FgYellow
 	fail = color.FgHiRed
 )
 
@@ -86,6 +87,10 @@ func parse(line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
 		color.Set(success)
+
+	// skipped
+	case strings.HasPrefix(trimmed, "--- SKIP"):
+		color.Set(skipped)
 
 	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):

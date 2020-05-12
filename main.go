@@ -125,7 +125,12 @@ func enableOnCI() {
 }
 
 func setPalette() {
-	envArray := [3]string{"GOTEST_SKIP_COLOR", "GOTEST_FAIL_COLOR", "GOTEST_PASS_COLOR"}
+
+	const TestSkipColorEnvVar string = "GOTEST_SKIP_COLOR"
+	const TestFailColorEnvVar string = "GOTEST_FAIL_COLOR"
+	const TestPassColorEnvVar string = "GOTEST_PASS_COLOR"
+
+	envArray := [3]string{TestSkipColorEnvVar, TestFailColorEnvVar, TestFailColorEnvVar}
 
 	for _, e := range envArray {
 		v := os.Getenv(e)
@@ -134,11 +139,11 @@ func setPalette() {
 		}
 		if c, ok := colors[v]; ok {
 			switch e {
-			case "GOTEST_FAIL_COLOR":
+			case TestFailColorEnvVar:
 				fail = color.New(c)
-			case "GOTEST_PASS_COLOR":
+			case TestPassColorEnvVar:
 				pass = color.New(c)
-			case "GOTEST_SKIP_COLOR":
+			case TestSkipColorEnvVar:
 				skip = color.New(c)
 			}
 		}

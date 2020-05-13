@@ -21,9 +21,9 @@ import (
 )
 
 var (
-	pass = color.New(color.FgGreen)
-	skip = color.New(color.FgYellow)
-	fail = color.New(color.FgHiRed)
+	success = color.New(color.FgGreen)
+	skipped = color.New(color.FgYellow)
+	fail    = color.New(color.FgHiRed)
 )
 
 func main() {
@@ -84,19 +84,19 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "?"):
 		c = nil
 
-	// succeeded
+	// success
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		c = pass
+		c = success
 
 	// skipped
 	case strings.HasPrefix(trimmed, "--- SKIP"):
-		c = skip
+		c = skipped
 
-	// failed
+	// failure
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
@@ -142,9 +142,9 @@ func setPalette() {
 			case TestFailColorEnvVar:
 				fail = color.New(c)
 			case TestPassColorEnvVar:
-				pass = color.New(c)
+				success = color.New(c)
 			case TestSkipColorEnvVar:
-				skip = color.New(c)
+				skipped = color.New(c)
 			}
 		}
 	}

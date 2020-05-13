@@ -130,7 +130,7 @@ func setPalette() {
 	const TestFailColorEnvVar string = "GOTEST_FAIL_COLOR"
 	const TestPassColorEnvVar string = "GOTEST_PASS_COLOR"
 
-	envArray := [3]string{TestSkipColorEnvVar, TestFailColorEnvVar, TestFailColorEnvVar}
+	envArray := [3]string{TestSkipColorEnvVar, TestFailColorEnvVar, TestPassColorEnvVar}
 
 	for _, e := range envArray {
 		v := os.Getenv(e)

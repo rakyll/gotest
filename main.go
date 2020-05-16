@@ -20,6 +20,13 @@ import (
 	"github.com/fatih/color"
 )
 
+const (
+	paletteEnv = "GOTEST_PALETTE"
+	failEnv    = "GOTEST_FAIL_COLOR"
+	passEnv    = "GOTEST_PASS_COLOR"
+	skipEnv    = "GOTEST_SKIP_COLOR"
+)
+
 var (
 	success = color.New(color.FgGreen)
 	skipped = color.New(color.FgYellow)
@@ -27,7 +34,7 @@ var (
 )
 
 func main() {
-	setPalette()
+	parseEnvAndSetPalette()
 	enableOnCI()
 	os.Exit(gotest(os.Args[1:]))
 }
@@ -124,13 +131,32 @@ func enableOnCI() {
 	}
 }
 
-func setPalette() {
+func parseEnvAndSetPalette() {
+	v := os.Getenv(paletteEnv)
+	if v == "" {
+		parseEnvColor()
+	} else {
 
-	const TestSkipColorEnvVar string = "GOTEST_SKIP_COLOR"
-	const TestFailColorEnvVar string = "GOTEST_FAIL_COLOR"
-	const TestPassColorEnvVar string = "GOTEST_PASS_COLOR"
+		vals := strings.Split(v, ",")
+		if len(vals) != 3 {
+			return
+		}
 
-	envArray := [3]string{TestSkipColorEnvVar, TestFailColorEnvVar, TestPassColorEnvVar}
+		if c, ok := colors[vals[0]]; ok {
+			fail = color.New(c)
+		}
+		if c, ok := colors[vals[1]]; ok {
+			success = color.New(c)
+		}
+		if c, ok := colors[vals[2]]; ok {
+			skipped = color.New(c)
+		}
+	}
+}
+
+func parseEnvColor() {
+
+	envArray := [3]string{skipEnv, failEnv, passEnv}
 
 	for _, e := range envArray {
 		v := os.Getenv(e)
@@ -139,11 +165,11 @@ func setPalette() {
 		}
 		if c, ok := colors[v]; ok {
 			switch e {
-			case TestFailColorEnvVar:
+			case failEnv:
 				fail = color.New(c)
-			case TestPassColorEnvVar:
+			case passEnv:
 				success = color.New(c)
-			case TestSkipColorEnvVar:
+			case skipEnv:
 				skipped = color.New(c)
 			}
 		}

@@ -23,7 +23,7 @@ $ gotest -v github.com/rakyll/hey
 The default output colors for `gotest` are:
 
 - `hired` for failed test cases
-- `green` for succeeding test cases
+- `green` for passing test cases
 - `yellow` for skipped test cases
 
 `gotest` comes with many colors. All available colors are:
@@ -53,7 +53,7 @@ You can configure the color of the output by setting the environment variable `G
 $ GOTEST_PALETTE="magenta,white" gotest -v github.com/rakyll/hey
 ```
 
-The output will have `magenta` for failed test cases and `white` for succeeding test cases.
+The output will have `magenta` for failed test cases and `white` for passing test cases.
 
 You can specify the color for skipped tests also:
 
@@ -64,11 +64,17 @@ $ GOTEST_PALETTE="magenta,white,hiyellow" gotest -v github.com/rakyll/hey
 The order of the colors for are:
 
 1 failed test cases
-1 succeeding test cases
+1 passing test cases
 1 skipped test cases
 
-If you only want to overwrite the colors for indicating succeeding or skipped test cases, you have to specify the defaults (`hired` being the default for failing test cases):
+If you only want to overwrite the colors for indicating passing or skipped test cases, you can leave the spot empty.
+
+This example demonstrates:
+
+- `hired` for failed test cases, using the default
+- `white` for passing test cases, overwriting the default
+- `hiyellow` for skipped test cases, overwriting the default
 
 ```bash
-$ GOTEST_PALETTE="hired,white,hiyellow" gotest -v github.com/rakyll/hey
+$ GOTEST_PALETTE=",white,hiyellow" gotest -v github.com/rakyll/hey
 ```

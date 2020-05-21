@@ -50,16 +50,10 @@ For a graphical presentation of the colors please see the documentation for the 
 You can configure the color of the output by setting the environment variable `GOTEST_PALETTE`:
 
 ```bash
-$ GOTEST_PALETTE="magenta,white" gotest -v github.com/rakyll/hey
-```
-
-The output will have `magenta` for failed test cases and `white` for passing test cases.
-
-You can specify the color for skipped tests also:
-
-```bash
 $ GOTEST_PALETTE="magenta,white,hiyellow" gotest -v github.com/rakyll/hey
 ```
+
+The output will have `magenta` for failed test cases and `white` for passing test cases and `hiyellow` for skipped test cases.
 
 The order of the colors for are:
 

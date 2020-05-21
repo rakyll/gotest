@@ -15,9 +15,9 @@ Accepts all the arguments and flags `go test` works with.
 Example:
 
 ```
-$ gotest -v github.com/rakyll/hey
+$ gotest -v github.com/jonasbn/go-test-demo
 ```
-![go test output](https://i.imgur.com/udjWuZx.gif)
+![gotest output example screenshot](https://raw.githubusercontent.com/jonasbn/go-test-demo/master/gotest-go-test-demo.png)
 
 gotest comes with many colors! Configure the color of the output by setting the following env variable:
 

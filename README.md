@@ -53,7 +53,7 @@ You can configure the color of the output by setting the environment variable `G
 $ GOTEST_PALETTE="magenta,white,hiyellow" gotest -v github.com/rakyll/hey
 ```
 
-The output will have `magenta` for failed test cases and `white` for passing test cases and `hiyellow` for skipped test cases.
+The output will have `magenta` for failed test cases, `white` for passing test cases, and `hiyellow` for skipped test cases.
 
 The order of the colors for are:
 

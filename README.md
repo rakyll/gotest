@@ -17,7 +17,7 @@ Example:
 ```
 $ gotest -v github.com/jonasbn/go-test-demo
 ```
-![gotest output example screenshot](https://raw.githubusercontent.com/jonasbn/go-test-demo/9daa3c50d60242227a159519873f276cceca4544/gotest-go-test-demo.png)
+![gotest output example screenshot](https://raw.githubusercontent.com/jonasbn/go-test-demo/1.0.0/gotest-go-test-demo.png)
 
 gotest comes with many colors! Configure the color of the output by setting the following env variable:
 

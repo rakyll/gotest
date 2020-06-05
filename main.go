@@ -115,6 +115,8 @@ func parse(line string) {
 func enableOnCI() {
 	ci := strings.ToLower(os.Getenv("CI"))
 	switch ci {
+	case "true":
+		fallthrough
 	case "travis":
 		fallthrough
 	case "appveyor":

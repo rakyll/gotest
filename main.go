@@ -75,10 +75,9 @@ func consume(wg *sync.WaitGroup, r io.Reader) {
 	}
 }
 
-var c *color.Color
-
 func parse(line string) {
 	trimmed := strings.TrimSpace(line)
+	defer color.Unset()
 
 	switch {
 	case strings.HasPrefix(trimmed, "=== RUN"):
@@ -105,16 +104,14 @@ func parse(line string) {
 		c = fail
 	}
 
-	if c == nil {
-		fmt.Printf("%s\n", line)
-		return
-	}
-	c.Printf("%s\n", line)
+	fmt.Printf("%s\n", line)
 }
 
 func enableOnCI() {
 	ci := strings.ToLower(os.Getenv("CI"))
 	switch ci {
+	case "true":
+		fallthrough
 	case "travis":
 		fallthrough
 	case "appveyor":
@@ -136,7 +133,7 @@ func setPalette() {
 		return
 	}
 	if c, ok := colors[vals[0]]; ok {
-		fail = color.New(c)
+		fail = c
 	}
 	if c, ok := colors[vals[1]]; ok {
 		pass = color.New(c)

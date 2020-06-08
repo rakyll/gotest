@@ -150,29 +150,30 @@ func enableOnCI() {
 }
 
 func parseEnvAndSetPalette() {
+	parsePaletteEnv()
+	parseColorEnvs()
+}
+
+func parsePaletteEnv() {
+
 	v := os.Getenv(paletteEnv)
-	if v == "" {
-		parseEnvColor()
-	} else {
 
+	if v != "" {
 		vals := strings.Split(v, ",")
-		if len(vals) != 3 {
-			return
+		states := []color.Attribute{fail, pass, skip}
+		for i := range vals {
+			if c, ok := colors[vals[i]]; ok {
+				states[i] = color.Attribute(c)
+			}
 		}
 
-		if c, ok := colors[vals[0]]; ok {
-			fail = c
-		}
-		if c, ok := colors[vals[1]]; ok {
-			pass = c
-		}
-		if c, ok := colors[vals[2]]; ok {
-			skip = c
-		}
+		fail = states[0]
+		pass = states[1]
+		skip = states[2]
 	}
 }
 
-func parseEnvColor() {
+func parseColorEnvs() {
 
 	envArray := [3]string{skipEnv, failEnv, passEnv}
 

@@ -94,6 +94,8 @@ func consume(wg *sync.WaitGroup, r io.Reader) {
 	}
 }
 
+var c *color.Color
+
 func parse(line string) {
 	trimmed := strings.TrimSpace(line)
 	defer color.Unset()
@@ -152,7 +154,7 @@ func setPalette() {
 		return
 	}
 	if c, ok := colors[vals[0]]; ok {
-		fail = c
+		fail = color.Set(c)
 	}
 	if c, ok := colors[vals[1]]; ok {
 		pass = color.New(c)

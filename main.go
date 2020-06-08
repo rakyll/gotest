@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
@@ -21,9 +22,9 @@ import (
 )
 
 var (
-	success = color.New(color.FgGreen)
-	skipped = color.New(color.FgYellow)
-	fail    = color.New(color.FgHiRed)
+	pass = color.FgGreen
+	skip = color.FgYellow
+	fail = color.FgHiRed
 )
 
 const paletteEnv = "GOTEST_PALETTE"
@@ -50,6 +51,24 @@ func gotest(args []string) int {
 
 	go consume(&wg, r)
 
+	sigc := make(chan os.Signal)
+	done := make(chan struct{})
+	defer func() {
+		done <- struct{}{}
+	}()
+	signal.Notify(sigc)
+
+	go func() {
+		for {
+			select {
+			case sig := <-sigc:
+				cmd.Process.Signal(sig)
+			case <-done:
+				return
+			}
+		}
+	}()
+
 	if err := cmd.Run(); err != nil {
 		if ws, ok := cmd.ProcessState.Sys().(syscall.WaitStatus); ok {
 			return ws.ExitStatus()
@@ -75,46 +94,45 @@ func consume(wg *sync.WaitGroup, r io.Reader) {
 	}
 }
 
-var c *color.Color
-
 func parse(line string) {
 	trimmed := strings.TrimSpace(line)
+	defer color.Unset()
 
+	var c color.Attribute
 	switch {
 	case strings.HasPrefix(trimmed, "=== RUN"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
-		c = nil
+		color.Unset()
 
-	// success
+	// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
-		c = success
+		c = pass
 
 	// skipped
 	case strings.HasPrefix(trimmed, "--- SKIP"):
-		c = skipped
+		c = skip
 
-	// failure
+	// failed
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
 		c = fail
 	}
 
-	if c == nil {
-		fmt.Printf("%s\n", line)
-		return
-	}
-	c.Printf("%s\n", line)
+	color.Set(c)
+	fmt.Printf("%s\n", line)
 }
 
 func enableOnCI() {
 	ci := strings.ToLower(os.Getenv("CI"))
 	switch ci {
+	case "true":
+		fallthrough
 	case "travis":
 		fallthrough
 	case "appveyor":
@@ -136,10 +154,10 @@ func setPalette() {
 		return
 	}
 	if c, ok := colors[vals[0]]; ok {
-		fail = color.New(c)
+		fail = c
 	}
 	if c, ok := colors[vals[1]]; ok {
-		success = color.New(c)
+		pass = c
 	}
 }
 

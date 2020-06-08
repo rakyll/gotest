@@ -22,9 +22,9 @@ import (
 )
 
 var (
-	pass = color.New(color.FgGreen)
-	skip = color.New(color.FgYellow)
-	fail = color.New(color.FgHiRed)
+	pass = color.FgGreen
+	skip = color.FgYellow
+	fail = color.FgHiRed
 )
 
 const paletteEnv = "GOTEST_PALETTE"
@@ -94,17 +94,16 @@ func consume(wg *sync.WaitGroup, r io.Reader) {
 	}
 }
 
-var c *color.Color
-
 func parse(line string) {
 	trimmed := strings.TrimSpace(line)
 	defer color.Unset()
 
+	var c color.Attribute
 	switch {
 	case strings.HasPrefix(trimmed, "=== RUN"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
-		c = nil
+		color.Unset()
 
 	// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
@@ -125,6 +124,7 @@ func parse(line string) {
 		c = fail
 	}
 
+	color.Set(c)
 	fmt.Printf("%s\n", line)
 }
 
@@ -154,10 +154,10 @@ func setPalette() {
 		return
 	}
 	if c, ok := colors[vals[0]]; ok {
-		fail = color.Set(c)
+		fail = c
 	}
 	if c, ok := colors[vals[1]]; ok {
-		pass = color.New(c)
+		pass = c
 	}
 }
 

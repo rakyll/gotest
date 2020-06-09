@@ -59,6 +59,7 @@ func main() {
 
 	os.Exit(gotest(args))
 
+
 }
 
 func gotest(args []string) int {
@@ -133,6 +134,7 @@ func parse(line string) {
 			return
 		}
 		color.Unset()
+
 		// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough

@@ -37,7 +37,7 @@ func main() {
 	enableOnCI()
 
 	var startingIndex = 1
-	if strings.HasPrefix(os.Args[1], "-skipnotest") {
+	if strings.Contains(os.Args[1], "-skipnotest") {
 		startingIndex++
 	}
 
@@ -117,7 +117,7 @@ func parse(line string) {
 			return
 		}
 		color.Unset()
-
+		// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):

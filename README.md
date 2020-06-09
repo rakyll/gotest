@@ -27,7 +27,7 @@ gotest comes with many colors! Configure the color of the output by setting the 
 - `GOTEST_PASS`
 - `GOTEST_SKIP`
 
-Alternatively you can use a single environment supporting a list of colors, in the order: fail and pass.
+Alternatively you can use a single environment supporting a list of colors, in the order: fail, pass, and skip.
 
 ```
 $ GOTEST_PALETTE="magenta,white"

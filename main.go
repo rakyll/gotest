@@ -36,12 +36,7 @@ func main() {
 	setPalette()
 	enableOnCI()
 
-	var startingIndex = 1
-	if strings.Contains(os.Args[1], "-skipnotest") {
-		startingIndex++
-	}
-
-	os.Exit(gotest(os.Args[startingIndex:]))
+	os.Exit(gotest(flag.Args()))
 
 }
 

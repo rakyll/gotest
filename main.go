@@ -21,16 +21,21 @@ import (
 	"github.com/fatih/color"
 )
 
+const (
+	paletteEnv = "GOTEST_PALETTE"
+	failEnv    = "GOTEST_FAIL_COLOR"
+	passEnv    = "GOTEST_PASS_COLOR"
+	skipEnv    = "GOTEST_SKIP_COLOR"
+)
+
 var (
 	pass = color.FgGreen
 	skip = color.FgYellow
 	fail = color.FgHiRed
 )
 
-const paletteEnv = "GOTEST_PALETTE"
-
 func main() {
-	setPalette()
+	parseEnvAndSetPalette()
 	enableOnCI()
 	os.Exit(gotest(os.Args[1:]))
 }
@@ -144,20 +149,48 @@ func enableOnCI() {
 	}
 }
 
-func setPalette() {
+func parseEnvAndSetPalette() {
+	parsePaletteEnv()
+	parseColorEnvs()
+}
+
+func parsePaletteEnv() {
 	v := os.Getenv(paletteEnv)
-	if v == "" {
-		return
+
+	if v != "" {
+		vals := strings.Split(v, ",")
+		states := []color.Attribute{fail, pass, skip}
+		for i := range vals {
+			if c, ok := colors[vals[i]]; ok {
+				states[i] = color.Attribute(c)
+			}
+		}
+
+		fail = states[0]
+		pass = states[1]
+		skip = states[2]
 	}
-	vals := strings.Split(v, ",")
-	if len(vals) != 2 {
-		return
-	}
-	if c, ok := colors[vals[0]]; ok {
-		fail = c
-	}
-	if c, ok := colors[vals[1]]; ok {
-		pass = c
+}
+
+func parseColorEnvs() {
+
+	envArray := [3]string{skipEnv, failEnv, passEnv}
+
+	for _, e := range envArray {
+		v := os.Getenv(e)
+		if v == "" {
+			continue
+		}
+		if c, ok := colors[v]; ok {
+			switch e {
+			case failEnv:
+				fail = c
+			case passEnv:
+				pass = c
+			case skipEnv:
+				skip = c
+			}
+		}
 	}
 }
 

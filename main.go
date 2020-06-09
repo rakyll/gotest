@@ -42,6 +42,7 @@ func main() {
 	}
 
 	os.Exit(gotest(os.Args[startingIndex:]))
+
 }
 
 func gotest(args []string) int {

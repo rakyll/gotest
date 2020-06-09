@@ -8,6 +8,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -23,15 +24,16 @@ import (
 var (
 	success = color.New(color.FgGreen)
 	fail    = color.New(color.FgHiRed)
-	ignore = true
+	ignore = flag.Bool("ignore",false,"ignore packages with no test files")
 )
 
 const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
+	flag.Parse()
 	setPalette()
 	enableOnCI()
-	os.Exit(gotest(os.Args[1:]))
+	os.Exit(gotest(os.Args[2:]))
 }
 
 func gotest(args []string) int {
@@ -41,12 +43,6 @@ func gotest(args []string) int {
 
 	r, w := io.Pipe()
 	defer w.Close()
-
-	for _,arg := range args {
-		if arg == "-v" {
-			ignore = false
-		}
-	}
 
 	args = append([]string{"test"}, args...)
 	cmd := exec.Command("go", args...)
@@ -91,7 +87,7 @@ func parse(line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
 		c = nil
-		if ignore{
+		if *ignore{
 			return
 		}
 

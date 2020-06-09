@@ -155,7 +155,6 @@ func parseEnvAndSetPalette() {
 }
 
 func parsePaletteEnv() {
-
 	v := os.Getenv(paletteEnv)
 
 	if v != "" {

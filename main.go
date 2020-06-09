@@ -8,6 +8,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -22,17 +23,25 @@ import (
 )
 
 var (
-	pass = color.FgGreen
-	skip = color.FgYellow
-	fail = color.FgHiRed
+	pass   = color.FgGreen
+	skip   = color.FgYellow
+	fail   = color.FgHiRed
+	ignore = flag.Bool("skipnotest", false, "skip packages with no test files")
 )
 
 const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
+	flag.Parse()
 	setPalette()
 	enableOnCI()
-	os.Exit(gotest(os.Args[1:]))
+
+	var startingIndex = 1
+	if strings.HasPrefix(os.Args[1], "-skipnotest") {
+		startingIndex++
+	}
+
+	os.Exit(gotest(os.Args[startingIndex:]))
 }
 
 func gotest(args []string) int {
@@ -103,9 +112,11 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "=== RUN"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
+		if *ignore {
+			return
+		}
 		color.Unset()
 
-	// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):

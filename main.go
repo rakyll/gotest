@@ -23,20 +23,41 @@ import (
 )
 
 var (
-	pass   = color.FgGreen
-	skip   = color.FgYellow
-	fail   = color.FgHiRed
-	ignore = flag.Bool("skipnotest", false, "skip packages with no test files")
+	pass        = color.FgGreen
+	skip        = color.FgYellow
+	fail        = color.FgHiRed
+	gotestFlags = []string{
+		"-skipnotest",
+	}
+	parseFlags = make([]string,0)
+	args = make([]string,0)
+	ignore *bool
 )
 
 const paletteEnv = "GOTEST_PALETTE"
 
 func main() {
-	flag.Parse()
 	setPalette()
 	enableOnCI()
 
-	os.Exit(gotest(flag.Args()))
+	flagSet := flag.NewFlagSet("gotestFlags",flag.ContinueOnError)
+	ignore=flagSet.Bool("skipnotest", false, "skip packages with no test files")
+
+	// separate program specific flags from go test flags
+	for _,arg:=range os.Args[1:] {
+		for _,flg := range gotestFlags {
+			// if the argument is in gotest flags the add it to parseFlags
+			if strings.Contains(arg,flg){
+				parseFlags=append(parseFlags,arg)
+			} else {
+				args = append(args,arg)
+			}
+		}
+	}
+
+	flagSet.Parse(parseFlags)
+
+	os.Exit(gotest(args))
 
 }
 

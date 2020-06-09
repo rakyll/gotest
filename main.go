@@ -37,7 +37,6 @@ func main() {
 	enableOnCI()
 
 	os.Exit(gotest(flag.Args()))
-
 }
 
 func gotest(args []string) int {

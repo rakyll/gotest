@@ -111,6 +111,7 @@ func parse(line string) {
 			return
 		}
 		color.Unset()
+
 		// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough

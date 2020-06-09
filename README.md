@@ -1,5 +1,7 @@
 # gotest
 
+[![CircleCI](https://circleci.com/gh/rakyll/gotest.svg?style=svg)](https://circleci.com/gh/rakyll/gotest)
+
 Like `go test` but with colors.
 
 ## Installation

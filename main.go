@@ -23,14 +23,9 @@ import (
 )
 
 var (
-	pass        = color.FgGreen
-	skip        = color.FgYellow
-	fail        = color.FgHiRed
-	gotestFlags = []string{
-		"-skipnotest",
-	}
-	parseFlags = make([]string,0)
-	args = make([]string,0)
+	pass   = color.FgGreen
+	skip   = color.FgYellow
+	fail   = color.FgHiRed
 	ignore *bool
 )
 
@@ -40,25 +35,24 @@ func main() {
 	setPalette()
 	enableOnCI()
 
-	flagSet := flag.NewFlagSet("gotestFlags",flag.ContinueOnError)
-	ignore=flagSet.Bool("skipnotest", false, "skip packages with no test files")
+	flagSet := flag.NewFlagSet("gotestFlags", flag.ContinueOnError)
+	ignore = flagSet.Bool("skipnotest", false, "skip packages with no test files")
+	gotestFlags := make([]string, 0)
+	args := make([]string, 0)
 
-	// separate program specific flags from go test flags
-	for _,arg:=range os.Args[1:] {
-		for _,flg := range gotestFlags {
-			// if the argument is in gotest flags the add it to parseFlags
-			if strings.Contains(arg,flg){
-				parseFlags=append(parseFlags,arg)
-			} else {
-				args = append(args,arg)
-			}
+	//separate program specific flags from go test flags
+	for _, arg := range os.Args[1:] {
+		// if the argument is in gotest flags the add it to gotestFlags
+		lookup := flagSet.Lookup(strings.Trim(arg, "-"))
+		if lookup != nil {
+			gotestFlags = append(gotestFlags, arg)
+		} else {
+			args = append(args, arg)
 		}
 	}
 
-	flagSet.Parse(parseFlags)
-
+	flagSet.Parse(gotestFlags)
 	os.Exit(gotest(args))
-
 
 }
 

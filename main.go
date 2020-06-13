@@ -8,6 +8,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -22,9 +23,10 @@ import (
 )
 
 var (
-	pass = color.FgGreen
-	skip = color.FgYellow
-	fail = color.FgHiRed
+	pass   = color.FgGreen
+	skip   = color.FgYellow
+	fail   = color.FgHiRed
+	ignore *bool
 )
 
 const paletteEnv = "GOTEST_PALETTE"
@@ -32,7 +34,26 @@ const paletteEnv = "GOTEST_PALETTE"
 func main() {
 	setPalette()
 	enableOnCI()
-	os.Exit(gotest(os.Args[1:]))
+
+	flagSet := flag.NewFlagSet("gotestFlags", flag.ContinueOnError)
+	ignore = flagSet.Bool("skipnotest", false, "skip packages with no test files")
+	gotestFlags := make([]string, 0)
+	args := make([]string, 0)
+
+	//separate program specific flags from go test flags
+	for _, arg := range os.Args[1:] {
+		// if the argument is in gotest flags the add it to gotestFlags
+		lookup := flagSet.Lookup(strings.Trim(arg, "-"))
+		if lookup != nil {
+			gotestFlags = append(gotestFlags, arg)
+		} else {
+			args = append(args, arg)
+		}
+	}
+
+	flagSet.Parse(gotestFlags)
+	os.Exit(gotest(args))
+
 }
 
 func gotest(args []string) int {
@@ -103,9 +124,12 @@ func parse(line string) {
 	case strings.HasPrefix(trimmed, "=== RUN"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "?"):
+		if *ignore {
+			return
+		}
 		color.Unset()
 
-	// passed
+		// passed
 	case strings.HasPrefix(trimmed, "--- PASS"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):

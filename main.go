@@ -8,7 +8,6 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -23,37 +22,24 @@ import (
 )
 
 var (
-	pass   = color.FgGreen
-	skip   = color.FgYellow
-	fail   = color.FgHiRed
-	ignore *bool
+	pass = color.FgGreen
+	skip = color.FgYellow
+	fail = color.FgHiRed
+
+	skipnotest bool
 )
 
-const paletteEnv = "GOTEST_PALETTE"
+const (
+	paletteEnv     = "GOTEST_PALETTE"
+	skipNoTestsEnv = "GOTEST_SKIPNOTESTS"
+)
 
 func main() {
-	setPalette()
+	enablePalette()
+	enableSkipNoTests()
 	enableOnCI()
 
-	flagSet := flag.NewFlagSet("gotestFlags", flag.ContinueOnError)
-	ignore = flagSet.Bool("skipnotest", false, "skip packages with no test files")
-	gotestFlags := make([]string, 0)
-	args := make([]string, 0)
-
-	//separate program specific flags from go test flags
-	for _, arg := range os.Args[1:] {
-		// if the argument is in gotest flags the add it to gotestFlags
-		lookup := flagSet.Lookup(strings.Trim(arg, "-"))
-		if lookup != nil {
-			gotestFlags = append(gotestFlags, arg)
-		} else {
-			args = append(args, arg)
-		}
-	}
-
-	flagSet.Parse(gotestFlags)
-	os.Exit(gotest(args))
-
+	os.Exit(gotest(os.Args[1:]))
 }
 
 func gotest(args []string) int {
@@ -121,16 +107,12 @@ func parse(line string) {
 
 	var c color.Attribute
 	switch {
-	case strings.HasPrefix(trimmed, "=== RUN"):
-		fallthrough
-	case strings.HasPrefix(trimmed, "?"):
-		if *ignore {
+	case strings.Contains(trimmed, "[no test files]"):
+		if skipnotest {
 			return
 		}
-		color.Unset()
 
-		// passed
-	case strings.HasPrefix(trimmed, "--- PASS"):
+	case strings.HasPrefix(trimmed, "--- PASS"): // passed
 		fallthrough
 	case strings.HasPrefix(trimmed, "ok"):
 		fallthrough
@@ -168,7 +150,7 @@ func enableOnCI() {
 	}
 }
 
-func setPalette() {
+func enablePalette() {
 	v := os.Getenv(paletteEnv)
 	if v == "" {
 		return
@@ -183,6 +165,15 @@ func setPalette() {
 	if c, ok := colors[vals[1]]; ok {
 		pass = c
 	}
+}
+
+func enableSkipNoTests() {
+	v := os.Getenv(skipNoTestsEnv)
+	if v == "" {
+		return
+	}
+	v = strings.ToLower(v)
+	skipnotest = v == "true"
 }
 
 var colors = map[string]color.Attribute{

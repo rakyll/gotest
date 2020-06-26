@@ -6,6 +6,14 @@ Like `go test` but with colors.
 
 ## Installation
 
+Use the pre-built binary for Linux 64-bit:
+
+```
+$ curl http://storage.googleapis.com/jbd-releases/gotest_linux > gotest && chmod +x gotest
+```
+
+Alternatively:
+
 ```
 $ go get -u github.com/rakyll/gotest
 ```

@@ -34,6 +34,12 @@ const (
 	skipNoTestsEnv = "GOTEST_SKIPNOTESTS"
 )
 
+type countStates struct {
+	pass int
+	skip int
+	fail int
+}
+
 func main() {
 	enablePalette()
 	enableSkipNoTests()
@@ -87,21 +93,27 @@ func gotest(args []string) int {
 
 func consume(wg *sync.WaitGroup, r io.Reader) {
 	defer wg.Done()
+	counters := countStates{pass: 0, skip: 0, fail: 0}
 	reader := bufio.NewReader(r)
 	for {
 		l, _, err := reader.ReadLine()
 		if err == io.EOF {
-			return
+			break
 		}
 		if err != nil {
 			log.Print(err)
 			return
 		}
-		parse(string(l))
+		parse(string(l), &counters)
 	}
+	printCounters(counters)
 }
 
-func parse(line string) {
+func printCounters(c countStates) {
+	fmt.Printf("Pass: %d, Fail: %d, Skip: %d", c.pass, c.fail, c.skip)
+}
+
+func parse(line string, counters *countStates) {
 	trimmed := strings.TrimSpace(line)
 	defer color.Unset()
 
@@ -118,16 +130,19 @@ func parse(line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "PASS"):
 		c = pass
+		counters.pass++
 
 	// skipped
 	case strings.HasPrefix(trimmed, "--- SKIP"):
 		c = skip
+		counters.skip++
 
 	// failed
 	case strings.HasPrefix(trimmed, "--- FAIL"):
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
 		c = fail
+		counters.fail++
 	}
 
 	color.Set(c)

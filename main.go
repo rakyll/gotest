@@ -56,6 +56,11 @@ func gotest(args []string) int {
 	cmd.Stdout = w
 	cmd.Env = os.Environ()
 
+	if err := cmd.Start(); err != nil {
+		log.Print(err)
+		return 1
+	}
+
 	go consume(&wg, r)
 
 	sigc := make(chan os.Signal)
@@ -76,7 +81,7 @@ func gotest(args []string) int {
 		}
 	}()
 
-	if err := cmd.Run(); err != nil {
+	if err := cmd.Wait(); err != nil {
 		if ws, ok := cmd.ProcessState.Sys().(syscall.WaitStatus); ok {
 			return ws.ExitStatus()
 		}

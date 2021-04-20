@@ -9,7 +9,7 @@ Like `go test` but with colors.
 Use the pre-built binary for Linux 64-bit:
 
 ```
-$ curl http://storage.googleapis.com/jbd-releases/gotest_linux > gotest && chmod +x gotest
+$ curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x gotest
 ```
 
 Alternatively:

@@ -22,9 +22,11 @@ import (
 )
 
 var (
-	pass = color.FgGreen
-	skip = color.FgYellow
-	fail = color.FgHiRed
+	pass     = color.FgGreen
+	skip     = color.FgYellow
+	fail     = color.FgHiRed
+	expected = color.FgHiRed
+	actual   = color.FgGreen
 
 	skipnotest bool
 )
@@ -133,6 +135,12 @@ func parse(line string) {
 		fallthrough
 	case strings.HasPrefix(trimmed, "FAIL"):
 		c = fail
+	// expected
+	case strings.HasPrefix(trimmed, "- "):
+		c = expected
+	// actual
+	case strings.HasPrefix(trimmed, "+ "):
+		c = actual
 	}
 
 	color.Set(c)

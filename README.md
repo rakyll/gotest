@@ -14,6 +14,18 @@ $ curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x
 
 Alternatively:
 
+```bash
+go install github.com/rakyll/gotest@latest
+```
+
+Or for a specification version
+
+```bash
+go install github.com/rakyll/gotest@v0.0.6
+```
+
+For Go versions lower than 1.17
+
 ```
 $ go get -u github.com/rakyll/gotest
 ```

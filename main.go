@@ -148,6 +148,8 @@ func enableOnCI() {
 		fallthrough
 	case "appveyor":
 		fallthrough
+	case "drone":
+		fallthrough
 	case "gitlab_ci":
 		fallthrough
 	case "circleci":

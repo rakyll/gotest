@@ -58,6 +58,7 @@ func gotest(args []string) int {
 
 	if err := cmd.Start(); err != nil {
 		log.Print(err)
+		wg.Done()
 		return 1
 	}
 

@@ -8,31 +8,32 @@ Like `go test` but with colors.
 
 Use the pre-built binary for Linux 64-bit:
 
-```
-$ curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x gotest
+```bash
+curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x gotest
 ```
 
 Alternatively:
 
-```
-$ go get -u github.com/rakyll/gotest
+```bash
+go get -u github.com/rakyll/gotest
 ```
 
-# Usage
+## Usage
 
 Accepts all the arguments and flags `go test` works with.
 
 Example:
 
+```bash
+gotest -v github.com/jonasbn/go-test-demo
 ```
-$ gotest -v github.com/jonasbn/go-test-demo
-```
+
 ![gotest output example screenshot](https://raw.githubusercontent.com/jonasbn/go-test-demo/1.0.0/gotest-go-test-demo.png)
 
 gotest comes with many colors! Configure the color of the output by setting the following env variable:
 
-```
-$ GOTEST_PALETTE="magenta,white"
+```bash
+GOTEST_PALETTE="magenta,white"
 ```
 
 The output will have magenta for failed cases, white for success.

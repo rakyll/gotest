@@ -26,18 +26,21 @@ var (
 	skip = color.FgYellow
 	fail = color.FgHiRed
 
-	skipnotest bool
+	skipnotest     bool
+	originalOutput *os.File
 )
 
 const (
-	paletteEnv     = "GOTEST_PALETTE"
-	skipNoTestsEnv = "GOTEST_SKIPNOTESTS"
+	paletteEnv        = "GOTEST_PALETTE"
+	skipNoTestsEnv    = "GOTEST_SKIPNOTESTS"
+	originalOutputEnv = "GOTEST_ORIGINAL_OUTPUT"
 )
 
 func main() {
 	enablePalette()
 	enableSkipNoTests()
 	enableOnCI()
+	enableOriginalOutput()
 
 	os.Exit(gotest(os.Args[1:]))
 }
@@ -136,6 +139,12 @@ func parse(line string) {
 		c = fail
 	}
 
+	if originalOutput != nil {
+		if _, err := fmt.Fprint(originalOutput, line); err != nil {
+			log.Fatalf("write original output file: %s", err)
+		}
+	}
+
 	color.Set(c)
 	fmt.Printf("%s\n", line)
 }
@@ -180,6 +189,19 @@ func enableSkipNoTests() {
 	}
 	v = strings.ToLower(v)
 	skipnotest = v == "true"
+}
+
+func enableOriginalOutput() {
+	v := os.Getenv(originalOutputEnv)
+	if v == "" {
+		return
+	}
+
+	var err error
+	originalOutput, err = os.OpenFile(v, os.O_WRONLY|os.O_TRUNC|os.O_CREATE|os.O_APPEND, 0o644)
+	if err != nil {
+		log.Fatalf("open original output file: %s", err)
+	}
 }
 
 var colors = map[string]color.Attribute{

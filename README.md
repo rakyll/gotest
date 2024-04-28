@@ -1,6 +1,6 @@
 # gotest
 
-[![CircleCI](https://circleci.com/gh/rakyll/gotest.svg?style=svg)](https://circleci.com/gh/rakyll/gotest)
+[![Actions](https://github.com/rakyll/gotest/actions/workflows/tests.yml/badge.svg)](https://github.com/rakyll/gotest/actions/workflows/tests.yml)
 
 Like `go test` but with colors.
 

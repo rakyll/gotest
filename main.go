@@ -140,7 +140,7 @@ func parse(line string) {
 	}
 
 	color.Set(c)
-	fmt.Printf("%s\n", line)
+	fmt.Printf("%s", line)
 }
 
 func enableOnCI() {

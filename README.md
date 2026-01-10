@@ -15,7 +15,7 @@ $ curl https://gotest-release.s3.amazonaws.com/gotest_linux > gotest && chmod +x
 Alternatively:
 
 ```
-$ go get -u github.com/rakyll/gotest
+$ go install github.com/rakyll/gotest@latest
 ```
 
 # Usage

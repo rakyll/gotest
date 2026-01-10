@@ -37,3 +37,19 @@ $ GOTEST_PALETTE="magenta,white"
 
 The output will have magenta for failed cases, white for success.
 Available colors: black, hiblack, red, hired, green, higreen, yellow, hiyellow, blue, hiblue, magenta, himagenta, cyan, hicyan, white, hiwhite.
+
+## Configuration
+
+### Environment Variables
+
+**GOTEST_PALETTE**: Customize the colors for test output (format: "fail_color,pass_color")
+```
+$ GOTEST_PALETTE="red,green" gotest -v ./...
+```
+
+**GOTEST_SKIPNOTESTS**: Skip printing "[no test files]" messages (set to "true" to enable)
+```
+$ GOTEST_SKIPNOTESTS="true" gotest -v ./...
+```
+
+**CI Detection**: gotest automatically enables colored output when running on CI systems (Travis, AppVeyor, GitLab CI, CircleCI). Colors are enabled by default on these platforms even if the terminal doesn't support them.
